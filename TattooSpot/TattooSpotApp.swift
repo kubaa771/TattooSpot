@@ -7,9 +7,22 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        return true
+    }
+}
 
 @main
 struct TattooSpotApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @ObservedObject var router = Router()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -25,7 +38,22 @@ struct TattooSpotApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack(path: $router.path) {
+                Group {
+                    switch router.currentRoot {
+                    case .login:
+                        LoginView()
+                    case .home:
+                        MainTabView()
+                    default:
+                        LoginView()
+                    }
+                }
+                .navigationDestination(for: Destination.self) { destination in
+                    router.choosePathFor(destination: destination)
+                }
+            }
+            .environmentObject(router)
         }
         .modelContainer(sharedModelContainer)
     }
