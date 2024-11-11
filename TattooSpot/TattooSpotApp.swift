@@ -38,21 +38,21 @@ struct TattooSpotApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack(path: $router.path) {
                 Group {
                     switch router.currentRoot {
                     case .login:
-                        LoginView()
+                        NavigationStack(path: $router.path) {
+                            LoginView()
+                                .navigationDestination(for: Destination.self) { destination in
+                                    router.choosePathFor(destination: destination)
+                                }
+                        }
                     case .home:
                         MainTabView()
                     default:
                         LoginView()
                     }
                 }
-                .navigationDestination(for: Destination.self) { destination in
-                    router.choosePathFor(destination: destination)
-                }
-            }
             .environmentObject(router)
         }
         .modelContainer(sharedModelContainer)

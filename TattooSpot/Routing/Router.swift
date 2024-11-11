@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// TODO: Create procotol Router with funcs like here. Then create an AuthenticationRouter: Router with only destinations for login and sign in. And create HomeRouter with
+
 class Router: ObservableObject {
     @Published var path = NavigationPath()
     @Published var currentRoot: Destination = .home
